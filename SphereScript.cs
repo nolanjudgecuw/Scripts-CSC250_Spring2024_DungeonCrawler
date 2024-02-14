@@ -7,8 +7,6 @@ public class SphereScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        print("inside Sphere Script");
-        print("Secret Number = " + MySingleton.secretNumber);
 
     }
 
