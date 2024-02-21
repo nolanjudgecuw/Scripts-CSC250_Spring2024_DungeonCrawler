@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         Rigidbody rb = this.gameObject.GetComponent<Rigidbody>();
 
