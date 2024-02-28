@@ -1,0 +1,90 @@
+class Room:
+    def __init__(self, exits):
+        self.exits = exits
+
+class Player:
+    def __init__(self, current_room):
+        self.current_room = current_room
+
+def move_player(player, direction):
+    if direction in player.current_room.exits:
+        player.current_room = player.current_room.exits[direction]
+        print("You move to the next room.")
+    else:
+        print("There is no exit in that direction.")
+
+def main():
+    room1 = Room({"north": None, "east": None, "south": None, "west": None})
+    room2 = Room({"north": None, "east": None, "south": None, "west": None})
+
+    # Define exits for each room
+    room1.exits["north"] = room2
+    room2.exits["south"] = room1
+
+    player = Player(room1)
+
+    while True:
+        print("You are in a room.")
+        print("Exits:", list(player.current_room.exits.keys()))
+        action = input("Choose a direction to move (or 'quit' to exit): ").lower()
+
+        if action == 'quit':
+            print("Goodbye!")
+            break
+        move_player(player, action)
+
+if __name__ == "__main__":
+    main()
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    public float moveSpeed = 5f;
+
+    void Update()
+    {
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+
+        Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput) * moveSpeed * Time.deltaTime;
+        transform.Translate(movement);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Exit"))
+        {
+            RoomExit exit = other.GetComponent<RoomExit>();
+            if (exit != null)
+            {
+                // Load the next scene
+                SceneTransitionManager.Instance.LoadNextScene(exit.nextSceneName);
+            }
+        }
+    }
+}
+using UnityEngine.SceneManagement;
+using UnityEngine;
+
+public class SceneTransitionManager : MonoBehaviour
+{
+    public static SceneTransitionManager Instance;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void LoadNextScene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+}
