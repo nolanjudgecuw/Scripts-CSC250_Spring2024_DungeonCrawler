@@ -176,3 +176,63 @@ public class RoomExit : MonoBehaviour
         SceneTransitionManager.Instance.LoadNextScene(nextSceneName, entranceExitName);
     }
 }
+
+
+using UnityEngine;
+
+public class PowerPellet : MonoBehaviour
+{
+    public int pelletValue = 1; // Value of each power pellet
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Increase the number of collected pellets
+            GameManager.Instance.CollectPellet(pelletValue);
+            // Remove the power pellet from the scene
+            Destroy(gameObject);
+        }
+    }
+}
+
+
+
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance;
+
+    private int totalPellets = 0;
+
+    public Text pelletCountText;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void CollectPellet(int value)
+    {
+        totalPellets += value;
+        UpdatePelletCountUI();
+    }
+
+    private void UpdatePelletCountUI()
+    {
+        if (pelletCountText != null)
+        {
+            pelletCountText.text = "Pellets: " + totalPellets;
+        }
+    }
+}
+
