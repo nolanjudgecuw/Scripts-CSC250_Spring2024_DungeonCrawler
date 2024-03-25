@@ -236,3 +236,22 @@ public class GameManager : MonoBehaviour
     }
 }
 
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class PowerPellet : MonoBehaviour
+{
+    public int pelletValue = 1; // Value of each power pellet
+    public string fightSceneName; // Name of the fight scene
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Trigger the transition to the fight scene
+            SceneTransitionManager.Instance.LoadNextScene(fightSceneName);
+            // Remove the power pellet from the scene
+            Destroy(gameObject);
+        }
+    }
+}
