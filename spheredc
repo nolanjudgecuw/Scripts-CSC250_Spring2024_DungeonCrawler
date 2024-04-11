@@ -276,3 +276,74 @@ public class PowerPellet : MonoBehaviour
     }
 }
 
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class Enemy : MonoBehaviour
+{
+    public int health = 100;
+    public Text hitText;
+    public Text deathText;
+    public AudioClip hitSound;
+    public AudioClip deathSound;
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            // Display hit text
+            if (hitText)
+            {
+                hitText.text = "Hit!";
+                Invoke("ClearHitText", 1f);
+            }
+            // Play hit sound
+            if (hitSound)
+            {
+                AudioSource.PlayClipAtPoint(hitSound, transform.position);
+            }
+        }
+    }
+
+    void Die()
+    {
+        // Display death text
+        if (deathText)
+        {
+            deathText.text = "Enemy Defeated!";
+            Invoke("ClearDeathText", 2f);
+        }
+        // Play death sound
+        if (deathSound)
+        {
+            AudioSource.PlayClipAtPoint(deathSound, transform.position);
+        }
+        // Destroy the enemy
+        Destroy(gameObject);
+    }
+
+    void ClearHitText()
+    {
+        if (hitText)
+        {
+            hitText.text = "";
+        }
+    }
+
+    void ClearDeathText()
+    {
+        if (deathText)
+        {
+            deathText.text = "";
+        }
+    }
+}
+
+
