@@ -346,4 +346,39 @@ public class Enemy : MonoBehaviour
     }
 }
 
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class PelletManager : MonoBehaviour
+{
+    public GameObject fightScene; // Reference to the fight scene
+    public Transform playerSpawnPoint; // Spawn point of the player at the beginning of the dungeon
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Trigger fight scene
+            fightScene.SetActive(true);
+            // Deactivate the pellet temporarily
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void PlayerWonFight()
+    {
+        // Reactivate the pellet
+        gameObject.SetActive(true);
+        // Return player to the dungeon
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void PlayerLostFight()
+    {
+        // Return player to the beginning of the dungeon
+        other.gameObject.transform.position = playerSpawnPoint.position;
+        // Reactivate the pellet
+        gameObject.SetActive(true);
+    }
+}
 
