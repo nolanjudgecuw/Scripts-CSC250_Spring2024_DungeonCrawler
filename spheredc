@@ -382,3 +382,52 @@ public class PelletManager : MonoBehaviour
     }
 }
 
+
+
+public class PelletManager : MonoBehaviour
+{
+    public GameObject fightScene; // Reference to the fight scene
+    public Transform playerSpawnPoint; // Spawn point of the player at the beginning of the dungeon
+    public AttackBonusItem attackBonusItem; // Reference to the attack bonus item
+
+    private int pelletsCollected = 0; // Number of pellets collected by the player
+    private int attackBonusCost = 5; // Cost of the attack bonus item in pellets
+
+    // Method to handle player picking up pellets
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            pelletsCollected++;
+            gameObject.SetActive(false); // Deactivate the pellet
+        }
+    }
+
+    // Method to handle purchasing items with pellets
+    public void PurchaseItem()
+    {
+        if (pelletsCollected >= attackBonusCost)
+        {
+            attackBonusItem.ApplyAttackBonus(PlayerController.instance); // Apply attack bonus
+            pelletsCollected -= attackBonusCost; // Deduct pellets used for the purchase
+        }
+        else
+        {
+            Debug.Log("Not enough pellets to purchase the item.");
+        }
+    }
+
+    // Method to handle player winning the fight
+    public void PlayerWonFight()
+    {
+        gameObject.SetActive(true); // Reactivate the pellet
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Return player to the dungeon
+    }
+
+    // Method to handle player losing the fight
+    public void PlayerLostFight()
+    {
+        PlayerController.instance.transform.position = playerSpawnPoint.position; // Return player to the beginning of the dungeon
+        gameObject.SetActive(true); // Reactivate the pellet
+    }
+}
