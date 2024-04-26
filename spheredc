@@ -477,3 +477,84 @@ public class PelletManager : MonoBehaviour
 
     // 
 }
+
+
+using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using System.IO;
+
+public class ItemManager : MonoBehaviour
+{
+    public Text[] itemLabels; // Text UI elements to display item names
+    public Button nextButton; // Button to navigate to the next set of items
+    public Button prevButton; // Button to navigate to the previous set of items
+
+    private List<Item> allItems = new List<Item>(); // List to hold all items from JSON
+    private int currentItemIndex = 0; // Index of the currently displayed item
+
+    void Start()
+    {
+        LoadItemsFromJSON(); // Load items from JSON file
+        DisplayItems(); // Display the initial set of items
+    }
+
+    void LoadItemsFromJSON()
+    {
+        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "items.json");
+
+        if (File.Exists(jsonFilePath))
+        {
+            string json = File.ReadAllText(jsonFilePath);
+            allItems = JsonUtility.FromJson<List<Item>>(json);
+        }
+        else
+        {
+            Debug.LogError("Items JSON file not found!");
+        }
+    }
+
+    void DisplayItems()
+    {
+        for (int i = 0; i < itemLabels.Length; i++)
+        {
+            int index = currentItemIndex + i;
+            if (index < allItems.Count)
+            {
+                itemLabels[i].text = allItems[index].itemName;
+            }
+            else
+            {
+                itemLabels[i].text = ""; // Clear text if no more items
+            }
+        }
+    }
+
+    public void NextItems()
+    {
+        if (currentItemIndex + itemLabels.Length < allItems.Count)
+        {
+            currentItemIndex += itemLabels.Length;
+            DisplayItems();
+        }
+    }
+
+    public void PrevItems()
+    {
+        if (currentItemIndex - itemLabels.Length >= 0)
+        {
+            currentItemIndex -= itemLabels.Length;
+            DisplayItems();
+        }
+    }
+
+    public void SelectItem(int itemIndex)
+    {
+        int selectedIndex = currentItemIndex + itemIndex - 1;
+        if (selectedIndex >= 0 && selectedIndex < allItems.Count)
+        {
+            Debug.Log("Selected item: " + allItems[selectedIndex].itemName);
+            // Perform any other actions related to selecting the item
+        }
+    }
+}
