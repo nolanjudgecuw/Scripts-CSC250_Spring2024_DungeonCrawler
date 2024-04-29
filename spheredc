@@ -558,3 +558,91 @@ public class ItemManager : MonoBehaviour
         }
     }
 }
+
+
+using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using System.IO;
+
+public class PokemonManager : MonoBehaviour
+{
+    public Text[] pokemonLabels; // Text UI elements to display pokemon names
+    public Text[] pokemonURLs; // Text UI elements to display pokemon URLs
+    public Button nextButton; // Button to navigate to the next set of pokemon
+    public Button prevButton; // Button to navigate to the previous set of pokemon
+
+    private List<Pokemon> allPokemon = new List<Pokemon>(); // List to hold all pokemon from JSON
+    private int currentPokemonIndex = 0; // Index of the currently displayed pokemon
+
+    void Start()
+    {
+        LoadPokemonFromJSON(); // Load pokemon from JSON file
+        DisplayPokemon(); // Display the initial set of pokemon
+    }
+
+    void LoadPokemonFromJSON()
+    {
+        string jsonFilePath = Path.Combine(Application.streamingAssetsPath, "pokemon.json");
+
+        if (File.Exists(jsonFilePath))
+        {
+            string json = File.ReadAllText(jsonFilePath);
+            PokemonCollection pokemonCollection = JsonUtility.FromJson<PokemonCollection>(json);
+            allPokemon = pokemonCollection.pokemonList;
+        }
+        else
+        {
+            Debug.LogError("Pokemon JSON file not found!");
+        }
+    }
+
+    void DisplayPokemon()
+    {
+        for (int i = 0; i < pokemonLabels.Length; i++)
+        {
+            int index = currentPokemonIndex + i;
+            if (index < allPokemon.Count)
+            {
+                pokemonLabels[i].text = allPokemon[index].name;
+                pokemonURLs[i].text = allPokemon[index].url;
+            }
+            else
+            {
+                pokemonLabels[i].text = ""; // Clear text if no more pokemon
+                pokemonURLs[i].text = ""; // Clear URL if no more pokemon
+            }
+        }
+    }
+
+    public void NextPokemon()
+    {
+        if (currentPokemonIndex + pokemonLabels.Length < allPokemon.Count)
+        {
+            currentPokemonIndex += pokemonLabels.Length;
+            DisplayPokemon();
+        }
+    }
+
+    public void PrevPokemon()
+    {
+        if (currentPokemonIndex - pokemonLabels.Length >= 0)
+        {
+            currentPokemonIndex -= pokemonLabels.Length;
+            DisplayPokemon();
+        }
+    }
+}
+
+[System.Serializable]
+public class Pokemon
+{
+    public string name;
+    public string url;
+}
+
+[System.Serializable]
+public class PokemonCollection
+{
+    public List<Pokemon> pokemonList;
+}
